@@ -11,45 +11,52 @@ const logHelp = {
 	noop: function(){},
 	consoleWrap: function(method){
 		return function _log(verbosity){
-			if(verbosity && typeof verbosity !== 'number' || arguments.length > 1) console[method].apply(null, arguments);
+			var hasVerbosity = typeof verbosity === 'number' || !arguments.length;
+			var logFunc = logHelp.isNode ? logHelp.generateColorLogger(method) : console[method].bind(console);
 
-			else if((verbosity || 0) < logHelp.DBG && console && console[method]){
-				if(logHelp.isNode){
-					return function _colorLog(){
-						if(logHelp.mapColors && logHelp.colorMap[method]){
-							Array.prototype.unshift.call(arguments, logHelp.colorMap[method]);
-							Array.prototype.push.call(arguments, logHelp.colorMap.reset);
-						}
+			if(hasVerbosity && !verbosity) verbosity = 0;
 
-						else if(method === 'error') Array.prototype.unshift.call(arguments, method);
+			if(console && console[method]){
+				if(hasVerbosity) return verbosity < logHelp.DBG ? logFunc : logHelp.noop;
 
-						console[method].apply(null, arguments);
-					};
-				}
-
-				return console[method].bind(console);
+				else if(!hasVerbosity) logFunc.apply(null, arguments);
+			}
+		};
+	},
+	generateColorLogger: function(method){
+		return function _colorLog(){
+			if(logHelp.mapColors && logHelp.colorMap[method]){
+				Array.prototype.unshift.call(arguments, logHelp.colorMap[method]);
+				Array.prototype.push.call(arguments, logHelp.colorMap.reset);
 			}
 
-			else return logHelp.noop;
+			else if(method === 'error') Array.prototype.unshift.call(arguments, method);
+
+			console[method].apply(null, arguments);
 		};
 	}
 };
 
-if(typeof Proxy === 'function') log = new Proxy(logHelp.consoleWrap('log'), { get(target, method){ return logHelp.consoleWrap(method); } });
+if(typeof Proxy === 'function'){
+	log = new Proxy(logHelp.consoleWrap('log'), { get(target, method){ return logHelp.consoleWrap(method); } });
+
+	log.help = logHelp;
+}
 
 else{
 	log = logHelp.consoleWrap('log');
+	log.info = logHelp.consoleWrap('info');
 	log.warn = logHelp.consoleWrap('warn');
 	log.error = logHelp.consoleWrap('error');
 
-	log.warn('Enabled limited non ES6 support, only log(v)(args), log.warn(v)(args) and log.error(v)(args) are available');
+	log.warn('Enabled limited non ES6 support, only log(v)(args), log.info(v)(args), log.warn(v)(args) and log.error(v)(args) are available');
 }
 
 if(typeof window === 'undefined'){
 	module.exports = log;
 
 	logHelp.isNode = true;
-	logHelp.mapColors = process.env.COLOR;
+	logHelp.mapColors = process.env.COLOR || process.env.DEV;
 
 	logHelp.DBG = process.env.DBG || (process.env.QUIET ? 0 : 1);
 }
