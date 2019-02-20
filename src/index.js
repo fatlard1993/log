@@ -11,7 +11,7 @@ const logHelp = {
 	noop: function(){},
 	consoleWrap: function(method){
 		return function _log(verbosity){
-			var hasVerbosity = typeof verbosity === 'number' || !arguments.length;
+			var hasVerbosity = !arguments.length || (arguments.length === 1 && typeof verbosity === 'number');
 			var logFunc = logHelp.isNode ? logHelp.generateColorLogger(method) : console[method].bind(console);
 
 			if(hasVerbosity && !verbosity) verbosity = 0;
