@@ -57,7 +57,7 @@ if(typeof window === 'undefined'){
 	logHelp.isNode = true;
 	logHelp.mapColors = process.env.COLOR || process.env.DEV;
 
-	logHelp.DBG = process.env.DBG || (process.env.QUIET ? 0 : 1);
+	logHelp.DBG = process.env.DBG || process.env.DEV || (process.env.QUIET ? 0 : 1);
 }
 
 log('log verbosity set to: '+ logHelp.DBG);
