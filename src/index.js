@@ -19,7 +19,7 @@ const logHelp = {
 			if(console && console[method]){
 				if(hasVerbosity) return verbosity < logHelp.DBG ? logFunc : logHelp.noop;
 
-				else if(!hasVerbosity) logFunc.apply(null, arguments);
+				else if(!hasVerbosity && logHelp.DBG) logFunc.apply(null, arguments);
 			}
 		};
 	},
