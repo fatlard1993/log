@@ -12,11 +12,12 @@ const logHelp = {
 	consoleWrap: function(method){
 		return function _log(verbosity){
 			var hasVerbosity = !arguments.length || (arguments.length === 1 && typeof verbosity === 'number');
-			var logFunc = logHelp.isNode ? logHelp.generateColorLogger(method) : console[method].bind(console);
 
 			if(hasVerbosity && !verbosity) verbosity = 0;
 
 			if(console && console[method]){
+				var logFunc = logHelp.isNode ? logHelp.generateColorLogger(method) : console[method].bind(console);
+
 				if(hasVerbosity) return verbosity < logHelp.DBG ? logFunc : logHelp.noop;
 
 				else if(!hasVerbosity && logHelp.DBG) logFunc.apply(null, arguments);
@@ -39,8 +40,6 @@ const logHelp = {
 
 if(typeof Proxy === 'function'){
 	log = new Proxy(logHelp.consoleWrap('log'), { get(target, method){ return logHelp.consoleWrap(method); } });
-
-	log.help = logHelp;
 }
 
 else{
@@ -61,4 +60,4 @@ if(typeof window === 'undefined'){
 	logHelp.DBG = process.env.DBG || (process.env.QUIET ? 0 : 1);
 }
 
-log()('log verbosity set to: '+ logHelp.DBG);
+log('log verbosity set to: '+ logHelp.DBG);
