@@ -20,8 +20,10 @@
 		"extends": "rules"
 	},
 	"devDependencies": {
-		"babel-eslint": "^10.0.1",
-		"eslint": "^5.15.1",
 		"eslint-config-rules": "github:fatlard1993/eslint-config-rules"
+	},
+	"peerDependencies": {
+		"babel-eslint": ">= 10",
+		"eslint": ">= 5"
 	}
 }
