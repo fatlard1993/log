@@ -48,7 +48,7 @@ else{
 	log.warn = logHelp.consoleWrap('warn');
 	log.error = logHelp.consoleWrap('error');
 
-	log.warn('Enabled limited non ES6 support, only log(v)(args), log.info(v)(args), log.warn(v)(args) and log.error(v)(args) are available');
+	log.warn()('[log] Enabled limited non ES6 support, only log(v)(args), log.info(v)(args), log.warn(v)(args) and log.error(v)(args) are available');
 }
 
 if(typeof window === 'undefined'){
@@ -60,4 +60,4 @@ if(typeof window === 'undefined'){
 	logHelp.DBG = process.env.DBG || process.env.DEV || (process.env.QUIET ? 0 : 1);
 }
 
-log('log verbosity set to: '+ logHelp.DBG);
+log()('[log] Verbosity set to: '+ logHelp.DBG);
