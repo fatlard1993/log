@@ -1,63 +1,80 @@
-var log;
+class Log {
+	constructor(opts = {}){
+		const tag = opts.tag = opts.tag || '_default_';
 
-const logHelp = {
-	DBG: 0,
-	colorMap: {
-		reset: '\x1b[0m',
-		info: '\x1b[34m',
-		warn: '\x1b[33m',
-		error: '\x1b[31m'
-	},
-	noop: function(){},
-	consoleWrap: function(method){
-		return function _log(verbosity){
-			var hasVerbosity = !arguments.length || (arguments.length === 1 && typeof verbosity === 'number');
+		opts.colorMap = Object.assign(opts.colorMap || {}, {
+			reset: '\x1b[0m',
+			info: '\x1b[34m',
+			warn: '\x1b[33m',
+			error: '\x1b[31m'
+		});
 
-			if(hasVerbosity && !verbosity) verbosity = 0;
+		Object.defineProperty(opts, 'newTag', {
+			set: function(newTag){
+				if(newTag === this.tag) return;
 
-			if(console && console[method]){
-				var logFunc = logHelp.isNode ? logHelp.generateColorLogger(method) : console[method].bind(console);
+				if(Log.prototype.loggers[newTag]){
+					Log.prototype.loggers[this.tag].opts = Object.assign(Log.prototype.loggers[newTag].opts, Log.prototype.loggers[this.tag].opts);
 
-				if(hasVerbosity) return verbosity < logHelp.DBG ? logFunc : logHelp.noop;
+					Log.prototype.loggers[newTag] = Log.prototype.loggers[this.tag];
+				}
 
-				else if(!hasVerbosity && logHelp.DBG) logFunc.apply(null, arguments);
+				Log.prototype.loggers[newTag] = Log.prototype.loggers[this.tag];
+
+				delete Log.prototype.loggers[this.tag];
+
+				this.tag = newTag;
 			}
-		};
-	},
-	generateColorLogger: function(method){
-		return function _colorLog(){
-			if(logHelp.mapColors && logHelp.colorMap[method]){
-				Array.prototype.unshift.call(arguments, logHelp.colorMap[method]);
-				Array.prototype.push.call(arguments, logHelp.colorMap.reset);
-			}
+		});
 
-			else if(method === 'error') Array.prototype.unshift.call(arguments, method);
+		Log.prototype.loggers = Log.prototype.loggers || {};
 
-			console[method].apply(null, arguments);
+		if(Log.prototype.loggers[tag]){
+			Log.prototype.loggers[tag].opts = Object.assign(Log.prototype.loggers[tag].opts, opts);
+
+			return Log.prototype.loggers[tag];
+		}
+
+		const isNode = typeof window === 'undefined';
+
+		const createLogger = (method) => {
+			if(!console || typeof console[method] !== 'function') return;
+
+			return function(verbosity){
+				const hasVerbosity = !arguments.length || (arguments.length === 1 && typeof verbosity === 'number');
+
+				if(hasVerbosity && !verbosity) verbosity = 0;
+
+				const colorMap = logger.opts.colorMap, mappedColor = colorMap[tag] || colorMap[method];
+				const args = Array.from(arguments);
+
+				if(hasVerbosity) args.splice(0, 1);
+
+				if(logger.opts.color && mappedColor){
+					args.unshift(mappedColor);
+					args.push(colorMap.reset);
+				}
+
+				else if(isNode && method === 'error') args.unshift('[ERROR]');
+
+				if(!logger.opts.silentTag && logger.opts.tag !== '_default_') args.unshift(`[${logger.opts.tag}]`);
+
+				const logFunc = console[method].bind(this, ...args);
+
+				if(hasVerbosity) return verbosity < logger.opts.verbosity ? logFunc : () => {};
+
+				else if(!hasVerbosity && logger.opts.verbosity) logFunc();
+			};
 		};
+
+		const logger = new Proxy(createLogger('log'), { get(target, method){ return (target[method] = (typeof target[method] !== 'undefined' ? target[method] : createLogger(method))); } });
+
+		logger.opts = opts;
+
+		Log.prototype.loggers[tag] = logger;
+
+		return logger;
 	}
-};
-
-if(typeof Proxy === 'function'){
-	log = new Proxy(logHelp.consoleWrap('log'), { get(target, method){ return logHelp.consoleWrap(method); } });
 }
 
-else{
-	log = logHelp.consoleWrap('log');
-	log.info = logHelp.consoleWrap('info');
-	log.warn = logHelp.consoleWrap('warn');
-	log.error = logHelp.consoleWrap('error');
-
-	log.warn()('[log] Enabled limited non ES6 support, only log(v)(args), log.info(v)(args), log.warn(v)(args) and log.error(v)(args) are available');
-}
-
-if(typeof window === 'undefined'){
-	module.exports = log;
-
-	logHelp.isNode = true;
-	logHelp.mapColors = process.env.COLOR || process.env.DEV;
-
-	logHelp.DBG = process.env.DBG || process.env.DEV || (process.env.QUIET ? 0 : 1);
-}
-
-log()('[log] Verbosity set to: '+ logHelp.DBG);
+if(typeof module === 'object') module.exports = Log;
