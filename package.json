@@ -1,6 +1,6 @@
 {
 	"name": "log",
-	"version": "3.0.0",
+	"version": "3.0.1",
 	"description": "A frontend/backend console log wrapper with verbosity",
 	"main": "src/index.js",
 	"scripts": {
