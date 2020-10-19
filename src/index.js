@@ -1,3 +1,5 @@
+"use-strict";
+
 class Log {
 	constructor(opts = {}){
 		const tag = opts.tag = opts.tag || '_default_';
@@ -45,19 +47,18 @@ class Log {
 
 				if(hasVerbosity && !verbosity) verbosity = 0;
 
-				const colorMap = logger.opts.colorMap, mappedColor = colorMap[tag] || colorMap[method];
+				const colorMap = logger.opts.colorMap, mappedColor = typeof colorMap[tag] === 'string' ? colorMap[tag] : colorMap[method];
 				const args = Array.from(arguments);
 
 				if(hasVerbosity) args.splice(0, 1);
 
-				if(logger.opts.color && mappedColor){
-					args.unshift(mappedColor);
-					args.push(colorMap.reset);
-				}
+				if(logger.opts.color && mappedColor) args.unshift(mappedColor);
 
 				else if(isNode && method === 'error') args.unshift('[ERROR]');
 
 				if(!logger.opts.silentTag && logger.opts.tag !== '_default_') args.unshift(`[${logger.opts.tag}]`);
+
+				args.unshift(colorMap.reset);
 
 				const logFunc = console[method].bind(this, ...args);
 
