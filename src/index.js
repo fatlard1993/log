@@ -72,7 +72,7 @@ class Log {
 			};
 		};
 
-		const logger = new Proxy(createLogger('log'), { get(target, method){ return (target[method] = (typeof target[method] !== 'undefined' ? target[method] : createLogger(method))); } });
+		var logger = new Proxy(createLogger('log'), { get(target, method){ return typeof target[method] !== 'undefined' ? target[method] : createLogger(method); } });
 
 		logger.opts = opts;
 
