@@ -4,6 +4,9 @@ class Log {
 	constructor(opts = {}){
 		const tag = opts.tag = opts.tag || '_default_';
 
+		if(typeof opts.defaultVerbosity === 'number') Log.prototype.defaultVerbosity = opts.defaultVerbosity;
+		if(typeof opts.verbosity === 'undefined') opts.verbosity = Log.prototype.defaultVerbosity;
+
 		opts.colorMap = Object.assign(opts.colorMap || {}, {
 			reset: '\x1b[0m',
 			info: '\x1b[34m',
@@ -77,5 +80,7 @@ class Log {
 		return logger;
 	}
 }
+
+Log.prototype.defaultVerbosity = 0;
 
 if(typeof module === 'object') module.exports = Log;
