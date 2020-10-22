@@ -5,7 +5,6 @@ class Log {
 		const tag = opts.tag = opts.tag || '_default_';
 
 		if(typeof opts.defaultVerbosity === 'number') Log.prototype.defaultVerbosity = opts.defaultVerbosity;
-		if(typeof opts.verbosity === 'undefined') opts.verbosity = Log.prototype.defaultVerbosity;
 
 		opts.colorMap = Object.assign(opts.colorMap || {}, {
 			reset: '\x1b[0m',
@@ -39,6 +38,8 @@ class Log {
 
 			return Log.prototype.loggers[tag];
 		}
+
+		if(typeof opts.verbosity === 'undefined') opts.verbosity = Log.prototype.defaultVerbosity;
 
 		const isNode = typeof window === 'undefined';
 
