@@ -22,6 +22,6 @@
 	"devDependencies": {
 		"eslint-config-rules": "github:fatlard1993/eslint-config-rules",
 		"babel-eslint": "^10.1.0",
-		"eslint": "^6.8.0"
+		"eslint": "^7.11.0"
 	}
 }
