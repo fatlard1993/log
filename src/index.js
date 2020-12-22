@@ -62,7 +62,7 @@ class Log {
 
 				if(!logger.opts.silentTag && logger.opts.tag !== '_default_') args.unshift(`[${logger.opts.tag}]`);
 
-				args.unshift(colorMap.reset);
+				if(logger.opts.color) args.unshift(colorMap.reset);
 
 				const logFunc = console[method].bind(this, ...args);
 
