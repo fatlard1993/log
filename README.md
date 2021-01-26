@@ -11,7 +11,7 @@ Create a new instance of Log and pass an optional options object
 * tag :String: _default_ | Multiple log instances created with the same tag will use the same function and options
 * silentTag :Boolean: false | If enabled will remove the tag label prepended to the log messages
 * defaults :Object: verbosity, color, colorMap | Sets Log.prototype.defaults[prop]
-* verbosity :Number: Log.prototype.defaultVerbosity | The logger verbosity is checked against each individual logger call verbosity. if callVerbosity is less than loggerVerbosity it executes the log
+* verbosity :Number: Log.prototype.defaults.verbosity | The logger verbosity is checked against each individual logger call verbosity. if callVerbosity is less than loggerVerbosity it executes the log
 * color :Boolean: false | If enabled console messages are wrapped in the appropriate color escape sequences for: info, warn, and error
 * colorMap :Object: reset, info, warn, error | Override or add to the colorMap
 
