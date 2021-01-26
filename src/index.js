@@ -4,14 +4,11 @@ class Log {
 	constructor(opts = {}){
 		const tag = opts.tag = opts.tag || '_default_';
 
-		if(typeof opts.defaultVerbosity === 'number') Log.prototype.defaultVerbosity = opts.defaultVerbosity;
-
-		opts.colorMap = Object.assign(opts.colorMap || {}, {
-			reset: '\x1b[0m',
-			info: '\x1b[34m',
-			warn: '\x1b[33m',
-			error: '\x1b[31m'
-		});
+		if(opts.defaults){
+			if(typeof opts.defaults.verbosity === 'number') Log.prototype.defaults.verbosity = opts.verbosity = opts.defaults.verbosity;
+			if(typeof opts.defaults.color === 'boolean') Log.prototype.defaults.color = opts.color = opts.defaults.color;
+			if(typeof opts.defaults.colorMap === 'object') Log.prototype.defaults.colorMap = opts.colorMap = Object.assign(Log.prototype.defaults.colorMap, opts.defaults.colorMap);
+		}
 
 		Object.defineProperty(opts, 'newTag', {
 			set: function(newTag){
@@ -31,15 +28,14 @@ class Log {
 			}
 		});
 
-		Log.prototype.loggers = Log.prototype.loggers || {};
-
 		if(Log.prototype.loggers[tag]){
 			Log.prototype.loggers[tag].opts = Object.assign(Log.prototype.loggers[tag].opts, opts);
 
 			return Log.prototype.loggers[tag];
 		}
 
-		if(typeof opts.verbosity === 'undefined') opts.verbosity = Log.prototype.defaultVerbosity;
+		if(typeof opts.verbosity === 'undefined') opts.verbosity = Log.prototype.defaults.verbosity;
+		if(typeof opts.color === 'undefined') opts.color = Log.prototype.defaults.color;
 
 		const isNode = typeof window === 'undefined';
 
@@ -51,24 +47,28 @@ class Log {
 
 				if(hasVerbosity && !verbosity) verbosity = 0;
 
-				const colorMap = logger.opts.colorMap, mappedColor = typeof colorMap[tag] === 'string' ? colorMap[tag] : colorMap[method];
+				const colorMap = Object.assign(opts.colorMap || {}, Log.prototype.defaults.colorMap), mappedColor = colorMap[method] || colorMap[tag];
 				const args = Array.from(arguments);
 
 				if(hasVerbosity) args.splice(0, 1);
 
-				if(logger.opts.color && mappedColor) args.unshift(mappedColor);
+				if(!opts.silentTag && opts.tag !== '_default_') args.unshift(`[${opts.tag}]`);
+
+				if(opts.color && mappedColor){
+					if(typeof args[0] === 'string') args[0] = `${colorMap.reset}${mappedColor}${args[0]}`;
+
+					else args.unshift(mappedColor);
+				}
 
 				else if(isNode && method === 'error') args.unshift('[ERROR]');
 
-				if(!logger.opts.silentTag && logger.opts.tag !== '_default_') args.unshift(`[${logger.opts.tag}]`);
-
-				if(logger.opts.color) args.unshift(colorMap.reset);
+				if(opts.color && !hasVerbosity) args.push(colorMap.reset);
 
 				const logFunc = console[method].bind(this, ...args);
 
-				if(hasVerbosity) return verbosity < logger.opts.verbosity ? logFunc : () => {};
+				if(hasVerbosity) return verbosity < opts.verbosity ? logFunc : () => {};
 
-				else if(!hasVerbosity && logger.opts.verbosity) logFunc();
+				else if(!hasVerbosity && opts.verbosity) logFunc();
 			};
 		};
 
@@ -82,6 +82,16 @@ class Log {
 	}
 }
 
-Log.prototype.defaultVerbosity = 0;
+Log.prototype.loggers = {};
+Log.prototype.defaults = {
+	verbosity: 0,
+	color: false,
+	colorMap: {
+		reset: '\x1b[0m',
+		info: '\x1b[34m',
+		warn: '\x1b[33m',
+		error: '\x1b[31m'
+	}
+};
 
 if(typeof module === 'object') module.exports = Log;
