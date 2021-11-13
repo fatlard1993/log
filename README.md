@@ -1,6 +1,6 @@
 # log
 
-A frontend/backend console log wrapper with verbosity
+A frontend/backend console log wrapper with tags, colors, and verbosity
 
 ## Usage
 

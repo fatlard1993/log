@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const Log = require('../src/index.js');
+const Log = require('../log.js');
 
 const defaultLogger = new Log({ defaults: { verbosity: 1 } });
 const coloredLogger = new Log({ tag: 'colorLog', color: true, colorMap: { colorLog: '\x1b[36m' } })
