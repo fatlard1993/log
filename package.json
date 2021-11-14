@@ -1,6 +1,6 @@
 {
 	"name": "log",
-	"version": "4.0.0",
+	"version": "5.0.0",
 	"main": "log.js",
 	"description": "A console log wrapper with tags, colors, and verbosity",
 	"author": "justfatlard",
