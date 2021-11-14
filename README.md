@@ -1,6 +1,6 @@
 # log
 
-A frontend/backend console log wrapper with tags, colors, and verbosity
+A console log wrapper with tags, colors, and verbosity
 
 ## Usage
 
@@ -8,16 +8,18 @@ Create a new instance of Log and pass an optional options object
 
 ### Options
 
-* tag :String: _default_ | Multiple log instances created with the same tag will use the same function and options
-* silentTag :Boolean: false | If enabled will remove the tag label prepended to the log messages
-* defaults :Object: verbosity, color, colorMap | Sets Log.prototype.defaults[prop]
-* verbosity :Number: Log.prototype.defaults.verbosity | The logger verbosity is checked against each individual logger call verbosity. if callVerbosity is less than loggerVerbosity it executes the log
-* color :Boolean: false | If enabled console messages are wrapped in the appropriate color escape sequences for: info, warn, and error
-* colorMap :Object: reset, info, warn, error | Override or add to the colorMap
+- tag :String: _default_ | Multiple log instances created with the same tag will use the same function and options
+- silentTag :Boolean: false | If enabled will remove the tag label prepended to the log messages
+- defaults :Object: verbosity, color, colorMap | Sets Log.prototype.defaults[prop]
+- verbosity :Number: Log.prototype.defaults.verbosity | The logger verbosity is checked against each individual logger call verbosity. if callVerbosity is less than loggerVerbosity it executes the log
+- color :Boolean: false | If enabled console messages are wrapped in the appropriate color escape sequences for: info, warn, and error
+- colorMap :Object: reset, info, warn, error | Override or add to the colorMap
 
 ### nodeJS
+
 ```
 const Log = require('log');
+
 const syslog = new Log({
 	tag: 'system',
 	verbosity: 1,
@@ -26,7 +28,10 @@ const syslog = new Log({
 ```
 
 ### browser
+
 ```
+import Log from 'log';
+
 const log = new Log({
 	tag: 'lib',
 	verbosity: 1
@@ -35,7 +40,8 @@ const log = new Log({
 
 If you want your console debug lines to match where the logger call is made, instead of inside the Log class, use the non-simple format: log()('stuff')
 
-### Logger
+### The Logger
+
 ```
 const log = new Log({ verbosity: 3 });
 
@@ -69,9 +75,10 @@ log.opts.silentTag = true;
 demoLog('without tag');
 ```
 
-### Access loggers from afar
+### Access other loggers from the prototype
+
 ```
-var loggerNames = Object.keys(Log.prototype.loggers);
+const loggerNames = Object.keys(Log.prototype.loggers);
 
 Log.prototype.loggers.demo.opts.verbosity = 0;
 Log.prototype.loggers._default_.opts.verbosity = 9;
