@@ -95,4 +95,4 @@
 	};
 
 	exports.Log = Log;
-})(typeof exports === 'undefined' ? (this['Log'] = {}) : exports);
+})(typeof exports === 'undefined' ? (this.Log = {}) : exports);

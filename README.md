@@ -18,7 +18,7 @@ Create a new instance of Log and pass an optional options object
 ### nodeJS
 
 ```
-const Log = require('log');
+const { Log } = require('log');
 
 const syslog = new Log({
 	tag: 'system',
@@ -30,7 +30,7 @@ const syslog = new Log({
 ### browser
 
 ```
-import Log from 'log';
+import { Log } from 'log';
 
 const log = new Log({
 	tag: 'lib',

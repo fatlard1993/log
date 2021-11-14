@@ -2,7 +2,7 @@
 
 const { Log } = require('../log.js');
 
-const log = new Log({ defaults: { verbosity: 1 } });
+const log = new Log({ verbosity: 1 });
 
 log('V0 visible');
 log(1)('V1 invisible');
