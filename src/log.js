@@ -47,9 +47,16 @@ class Log {
 
 	makeLogger(method) {
 		const metaLogger = this;
+		const { tag } = this.options;
 
 		return function (...args) {
-			const { colorMap, silentTag, methodTag, tag, verbosity, color: useColor } = metaLogger.options;
+			const {
+				colorMap,
+				silentTag,
+				methodTag,
+				verbosity,
+				color: useColor,
+			} = loggers[tag]?.options || metaLogger.options;
 
 			const isVerbosityCall = !args.length || (args.length === 1 && typeof args[0] === 'number');
 			const thisVerbosity = isVerbosityCall ? args.shift() || 0 : 0;
