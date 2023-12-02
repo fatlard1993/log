@@ -2,7 +2,7 @@ module.exports = {
 	arrowParens: 'avoid',
 	bracketSpacing: true,
 	endOfLine: 'lf',
-	printWidth: 200,
+	printWidth: 120,
 	proseWrap: 'never',
 	quoteProps: 'as-needed',
 	trailingComma: 'all',

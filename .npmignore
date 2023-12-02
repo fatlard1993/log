@@ -1,1 +1,5 @@
-test/
+*.test.js
+.*
+demo
+jsconfig.json
+test-setup.js

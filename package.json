@@ -1,15 +1,24 @@
 {
 	"name": "log",
 	"version": "5.0.0",
-	"main": "log.js",
+	"exports": {
+		".": "./index.js"
+	},
+	"files": [
+		"/src/**/*",
+		"!/src/**/*.test.js",
+		"index.js"
+	],
 	"description": "A console log wrapper with tags, colors, and verbosity",
 	"author": "justfatlard",
 	"license": "ISC",
 	"scripts": {
-		"test": "node ./test/index.js",
-		"lint": "eslint",
-		"lint:fix": "eslint --fix --ext .js .",
-		"pretty": "prettier --write ."
+		"demo": "bun ./demo/index.js",
+		"lint": "bun --bun eslint --ext .js .",
+		"lint:fix": "bun --bun eslint --fix --ext .js .",
+		"pretty": "bun --bun prettier .",
+		"pretty:fix": "bun --bun prettier --write .",
+		"fix": "bun run lint:fix ; bun run pretty:fix"
 	},
 	"repository": {
 		"type": "git",
@@ -19,16 +28,18 @@
 		"url": "https://github.com/fatlard1993/log/issues"
 	},
 	"homepage": "https://github.com/fatlard1993/log#readme",
+	"dependencies": {},
 	"devDependencies": {
-		"eslint": "^8.2.0",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-cypress": "^2.12.1",
-		"eslint-plugin-prettier": "^4.0.0",
-		"husky": "^7.0.4",
-		"lint-staged": "^12.0.1",
-		"prettier": "2.4.1"
-	},
-	"lint-staged": {
-		"**/*": "prettier --write --ignore-unknown"
+		"bun-types": "^1.0.14",
+		"eslint": "^8.55.0",
+		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-compat": "^4.2.0",
+		"eslint-plugin-import": "^2.29.0",
+		"eslint-plugin-prettier": "^5.0.1",
+		"eslint-plugin-spellcheck": "0.0.20",
+		"eslint-plugin-testing-library": "^6.2.0",
+		"eslint-plugin-unicorn": "^49.0.0",
+		"eslint-plugin-write-good-comments": "^0.2.0",
+		"prettier": "3.1.0"
 	}
 }
