@@ -7,7 +7,7 @@ export let defaults = {
 	tag: '__default',
 	colorMap: {},
 };
-export const methodMap = {};
+export let methodMap = {};
 
 const DEFAULT_COLOR_MAP = {
 	__reset: '\x1b[0m',
@@ -19,6 +19,7 @@ const DEFAULT_COLOR_MAP = {
 class Log {
 	constructor(options = {}) {
 		if (options.defaults) defaults = { ...defaults, ...options.defaults };
+		if (options.methodMap) methodMap = { ...methodMap, ...options.methodMap };
 
 		this.options = { ...defaults, ...options };
 
